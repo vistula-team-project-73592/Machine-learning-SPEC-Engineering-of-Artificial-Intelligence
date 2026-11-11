@@ -1,0 +1,19 @@
+Graded Evidence: When Does Compilation Help?
+Eager Execution vs. Compilation:
+By default, PyTorch runs in "eager execution" mode. This means Python reads our code line-by-line and translates every single math operation (like addition or ReLU) to the C++ backend one at a time. While this makes debugging very easy, the constant back-and-forth communication creates a lot of "framework overhead" that slows things down.
+Compilation (using tools like torch.compile or torch.jit.trace) fixes this. It runs dummy data through the model once to record the entire "computation graph" ahead of time. It then optimizes this graph (for example, by fusing a multiplication and a ReLU into one single, fast step) and sends the whole package to the hardware at once.
+When Compilation is Helpful:
+
+Long Training Loops: If you are training a model for thousands of epochs, paying a small time penalty upfront to compile the graph will save you massive amounts of time over the rest of the training process.
+
+Production/Inference: When deploying a finished model to real users, you want it to run as fast as possible without Python's overhead.
+
+Static Architectures: It works best when the model's structure and the sizes of the input tensors do not change between runs.
+
+When Compilation is NOT Helpful:
+
+Dynamic Models: If your model changes its shape or path every time you feed it data (like some advanced language models), the compiler has to constantly re-compile the graph, which makes it much slower than eager mode.
+
+Debugging: If you are actively writing code and trying to find errors, eager mode is much better because it shows exactly which line of Python caused the crash.
+
+One-off Runs: The compilation step itself takes a few seconds. If you are only running a small script once, eager mode will finish before the compiler even starts.
