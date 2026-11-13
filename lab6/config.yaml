@@ -1,0 +1,8 @@
+# config.yaml
+seed: 42
+batch_size: 64
+epochs: 5
+learning_rate: 0.001
+num_workers: 2
+grad_accum_steps: 1
+run_name: "lab3_best_model_baseline"
